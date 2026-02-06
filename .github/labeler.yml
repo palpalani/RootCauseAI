@@ -1,0 +1,33 @@
+# Label configuration for auto-labeling PRs
+
+python:
+  - 'rootcauseai/**/*.py'
+  - 'tests/**/*.py'
+  - '*.py'
+
+documentation:
+  - '*.md'
+  - 'docs/**/*'
+  - 'README.md'
+  - 'CONTRIBUTING.md'
+
+tests:
+  - 'tests/**/*'
+  - '**/*test*.py'
+  - '**/*_test.py'
+
+ci:
+  - '.github/workflows/**/*'
+  - '.github/**/*.yml'
+  - '.github/**/*.yaml'
+
+dependencies:
+  - 'pyproject.toml'
+  - 'uv.lock'
+  - '.github/dependabot.yml'
+
+frontend:
+  - 'index.html'
+  - '**/*.html'
+  - '**/*.css'
+  - '**/*.js'
