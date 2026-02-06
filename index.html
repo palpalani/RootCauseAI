@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RootCauseAI - Log Analyzer Agent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f3ff',
+                            100: '#e0e7ff',
+                            500: '#667eea',
+                            600: '#5568d3',
+                            700: '#4c5bb8',
+                        },
+                        secondary: {
+                            500: '#764ba2',
+                            600: '#653a8e',
+                            700: '#5a3379',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-primary-500 via-secondary-500 to-primary-700 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full p-8 md:p-12">
+        <!-- Header -->
+        <header class="mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">RootCauseAI</h1>
+            <p class="text-gray-600 text-lg font-medium mb-1">Log Analyzer Agent</p>
+            <p class="text-gray-500 text-sm">Upload your log file and get AI-powered insights</p>
+        </header>
+
+        <!-- Upload Section -->
+        <section class="mb-8">
+            <div id="uploadArea" class="border-2 border-dashed border-gray-300 rounded-xl p-8 md:p-12 text-center transition-all duration-300 hover:border-primary-500 hover:bg-primary-50">
+                <div class="mb-6">
+                    <label for="logFile" class="inline-block px-6 py-3 bg-primary-500 text-white font-semibold rounded-lg cursor-pointer transition-colors duration-200 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+                        Choose Log File
+                    </label>
+                    <input type="file" id="logFile" accept=".txt" class="hidden" onchange="displayFileName()" />
+                </div>
+                <div id="fileName" class="text-gray-500 italic text-sm mt-4 min-h-[20px]">No file selected</div>
+                <button 
+                    id="analyzeBtn" 
+                    onclick="uploadLog()" 
+                    class="mt-6 px-8 py-3 bg-secondary-500 text-white font-semibold rounded-lg transition-all duration-200 hover:bg-secondary-600 hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
+                >
+                    Analyze Logs
+                </button>
+            </div>
+        </section>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="hidden mb-8">
+            <div class="flex flex-col items-center justify-center py-8">
+                <div class="w-12 h-12 border-4 border-primary-200 border-t-primary-500 rounded-full animate-spin mb-4"></div>
+                <p class="text-gray-600 font-medium">Analyzing logs...</p>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <section id="resultsSection" class="hidden">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Analysis Results</h2>
+            <div id="result" class="bg-gray-50 border border-gray-200 rounded-lg p-6 font-mono text-sm text-gray-800 whitespace-pre-wrap break-words max-h-96 overflow-y-auto leading-relaxed"></div>
+        </section>
+    </div>
+
+    <script>
+        function displayFileName() {
+            const fileInput = document.getElementById("logFile");
+            const fileName = document.getElementById("fileName");
+            
+            if (fileInput.files.length > 0) {
+                fileName.textContent = `Selected: ${fileInput.files[0].name}`;
+                fileName.classList.remove("text-gray-500");
+                fileName.classList.add("text-primary-600", "font-medium");
+            } else {
+                fileName.textContent = "No file selected";
+                fileName.classList.remove("text-primary-600", "font-medium");
+                fileName.classList.add("text-gray-500");
+            }
+        }
+
+        async function uploadLog() {
+            const fileInput = document.getElementById("logFile");
+            const file = fileInput.files[0];
+            const analyzeBtn = document.getElementById("analyzeBtn");
+            const loading = document.getElementById("loading");
+            const resultsSection = document.getElementById("resultsSection");
+            const resultDiv = document.getElementById("result");
+            const uploadArea = document.getElementById("uploadArea");
+
+            if (!file) {
+                alert("Please select a log file first");
+                return;
+            }
+
+            // Clear previous results
+            resultDiv.textContent = "";
+            resultDiv.className = "bg-gray-50 border border-gray-200 rounded-lg p-6 font-mono text-sm text-gray-800 whitespace-pre-wrap break-words max-h-96 overflow-y-auto leading-relaxed";
+            resultsSection.classList.add("hidden");
+
+            // Show loading state
+            analyzeBtn.disabled = true;
+            loading.classList.remove("hidden");
+            uploadArea.classList.add("opacity-50", "pointer-events-none");
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const response = await fetch("/analyze", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.textContent = data.analysis;
+                    resultDiv.classList.remove("bg-red-50", "border-red-200", "text-red-800");
+                    resultDiv.classList.add("bg-gray-50", "border-gray-200", "text-gray-800");
+                    resultsSection.classList.remove("hidden");
+                } else {
+                    resultDiv.textContent = "Error: " + (data.error || "Unknown error occurred");
+                    resultDiv.classList.remove("bg-gray-50", "border-gray-200", "text-gray-800");
+                    resultDiv.classList.add("bg-red-50", "border-red-200", "text-red-800");
+                    resultsSection.classList.remove("hidden");
+                }
+            } catch (error) {
+                resultDiv.textContent = "Error: " + error.message;
+                resultDiv.classList.remove("bg-gray-50", "border-gray-200", "text-gray-800");
+                resultDiv.classList.add("bg-red-50", "border-red-200", "text-red-800");
+                resultsSection.classList.remove("hidden");
+            } finally {
+                analyzeBtn.disabled = false;
+                loading.classList.add("hidden");
+                uploadArea.classList.remove("opacity-50", "pointer-events-none");
+            }
+        }
+
+        // Allow Enter key to trigger analysis
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && !document.getElementById("analyzeBtn").disabled) {
+                uploadLog();
+            }
+        });
+
+        // Drag and drop support
+        const uploadArea = document.getElementById("uploadArea");
+        const fileInput = document.getElementById("logFile");
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => {
+                uploadArea.classList.add('border-primary-500', 'bg-primary-50');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => {
+                uploadArea.classList.remove('border-primary-500', 'bg-primary-50');
+            }, false);
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0 && files[0].name.endsWith('.txt')) {
+                fileInput.files = files;
+                displayFileName();
+            } else {
+                alert("Please drop a .txt file");
+            }
+        }, false);
+    </script>
+</body>
+</html>

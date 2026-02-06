@@ -1,0 +1,12 @@
+2025-01-18 10:12:01 INFO Starting server on port 8080
+2025-01-18 10:12:02 INFO Initializing database connection pool
+2025-01-18 10:12:05 ERROR Database connection failed
+2025-01-18 10:12:05 ERROR Timeout while connecting to db-prod at 192.168.1.50:5432
+2025-01-18 10:12:05 ERROR Connection refused by remote host
+2025-01-18 10:12:10 WARN Retrying connection (attempt 1 of 3)
+2025-01-18 10:12:15 ERROR Database connection failed on retry
+2025-01-18 10:12:20 WARN Retrying connection (attempt 2 of 3)
+2025-01-18 10:12:25 ERROR Database connection failed on retry
+2025-01-18 10:12:30 ERROR Service crashed due to unhandled exception
+2025-01-18 10:12:30 ERROR Stack trace: NullPointerException at DatabaseHandler.connect()
+2025-01-18 10:12:30 FATAL Application shutdown initiated

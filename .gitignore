@@ -1,0 +1,79 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+*.profraw
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+.uv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Heroku
+.heroku/
+
+# Type checking
+.pytype/
+typecheck/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv (keep .python-version for open source projects)
+# .python-version
+
+# UV
+# Note: uv.lock should be committed for reproducibility
+# .uv.lock
+
+# Cost tracking and cache
+cost_data.json
+.cache/
+*.cache
