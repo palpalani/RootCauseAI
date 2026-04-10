@@ -27,7 +27,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "fastapi>=0.115.0",
+    "fastapi>=0.135.3",
     "uvicorn[standard]>=0.32.0",
     "langchain>=0.3.7",
     "langchain-core>=0.3.21",
