@@ -36,7 +36,7 @@ dependencies = [
     "langchain-text-splitters>=1.1.1",
     "openai>=1.57.0",
     "tiktoken>=0.8.0",
-    "python-multipart>=0.0.12",
+    "python-multipart>=0.0.26",
     "python-dotenv>=1.0.1",
 ]
 
